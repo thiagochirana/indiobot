@@ -1,12 +1,13 @@
-const { SlashCommandBuilder, MessageFlags, Colors } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, AttachmentBuilder, Colors } = require('discord.js');
 const embed = require('../../messages/embed');
+const attachs = require("../../attach.json")
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
 	async execute(interaction) {
-        emb = embed.create("Pong!", "Respondido", Colors.DarkGold, "https://c.tenor.com/3gfpyXD6kM8AAAAd/tenor.gif" )
-        await interaction.reply({ embeds: [emb] , flags: MessageFlags.Ephemeral})
-	},
+        emb = embed.create("Pong!", "Respondido", Colors.DarkGold, attachs.gifs.ping )
+        await interaction.reply({ embeds: [emb], flags: MessageFlags.Ephemeral })
+	}
 };
