@@ -16,7 +16,13 @@ async function verifyStatus() {
         } else {
           if(!is_live) {
             is_live = true;
-            emb = embed.create("LIVE ON!", "Estou online, vem ver!\n\nhttps://www.twitch.tv/devcurumin/", Colors.Purple)
+            const res = await axios.get('https://decapi.me/twitch/title/DevCurumin');
+            emb = embed.create(
+                `LIVE ON! ${res.data}`,
+                "Estou online, vem ver!\n\nhttps://www.twitch.tv/devcurumin/",
+                Colors.Purple,
+                "https://static-cdn.jtvnw.net/previews-ttv/live_user_devcurumin-400x225.jpg"
+            )
             client.channels.fetch('1262877455924985948')
                 .then( channel => channel.send({ embeds: [emb], content: "@everyone" }) );
           }
