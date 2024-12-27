@@ -52,7 +52,7 @@ class Chatbot {
 
             this.chat.addEventListener("close", () => {
                 this.eventEmitter.emit("closed")
-                this.chat = undefined ;
+                this.chat = undefined;
             });
         } catch (error) {
             this.eventEmitter.emit("error", JSON.stringify(error))
