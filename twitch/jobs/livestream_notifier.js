@@ -6,16 +6,16 @@ const { Colors } = require("discord.js");
 
 let notified = false;
 
-cron.schedule('* * * * *', async () => {
+cron.schedule("* * * * *", async () => {
   try {
-    const uptime = await axios.get('https://decapi.me/twitch/uptime/DevCurumin').data;
+    const uptime = await axios.get(`https://decapi.me/twitch/uptime/${process.env.TWITCH_CHANNEL}`).data;
 
     if (uptime.includes("offline")) return notified = false;
     if (notified) return;
 
-    const title = await axios.get('https://decapi.me/twitch/title/DevCurumin').data;
+    const title = await axios.get(`https://decapi.me/twitch/title/${process.env.TWITCH_CHANNEL}`).data;
 
-    const emb = embed.create({ title: `LIVE ON! ${title}`, description: "Estou online, vem ver!\nhttps://www.twitch.tv/devcurumin/", color: Colors.Purple, imageUrl: "https://static-cdn.jtvnw.net/previews-ttv/live_user_devcurumin-400x225.jpg" })
+    const emb = embed.create({ title: `LIVE ON! ${title}`, description: `Estou online, vem ver!\nhttps://www.twitch.tv/${process.env.TWITCH_CHANNEL}/`, color: Colors.Purple, imageUrl: `https://static-cdn.jtvnw.net/previews-ttv/live_user_${process.env.TWITCH_CHANNEL}-400x225.jpg` })
 
     const channel = await client.channels.fetch(process.env.DISCORD_CHANNEL_LIVE_NOTIFICATION)
     channel.send({ embeds: [emb], content: "@everyone" })
