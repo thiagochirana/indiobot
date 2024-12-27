@@ -3,6 +3,7 @@ module.exports = {
     usage: ["!ping"],
     description: "Returns pong and args length",
     execute(bot, sender, args) {
-        bot.sendMessage(`Pong! ${sender}, sua mensagem tem ${args.length} args`)
+        console.log(sender)
+        bot.sendMessage(`Pong! @${sender.username}, sua mensagem tem ${args.length} args`)
     }
 }

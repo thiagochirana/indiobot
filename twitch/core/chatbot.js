@@ -1,12 +1,14 @@
 const WebSocket = require("ws")
 const EventEmitter = require('node:events');
 const parser = require("./parser");
+const axios = require("axios");
 
 class Chatbot {
-    constructor(username, oauth_token, channel_name) {
+    constructor(username, oauth_token, channel_name, client_id) {
         this.username = username;
         this.oauth_token = oauth_token;
         this.channel_name = channel_name;
+        this.client_id = client_id;
         this.eventEmitter = new EventEmitter();
         this.chat = undefined;
         this.twitchWssURL = "wss://irc-ws.chat.twitch.tv:443";
@@ -64,6 +66,13 @@ class Chatbot {
         if (!this.chat) return console.log("Not connected");
 
         this.chat.send(`PRIVMSG #${this.channel_name} :${content}`);
+    }
+
+    async getUserInfo(username) {
+        const rawData = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { "Authorization": `Bearer ${this.oauth_token}`, "Client-ID": `${this.client_id}` } });
+        const data = rawData.data.data;
+
+        return data;
     }
 }
 
