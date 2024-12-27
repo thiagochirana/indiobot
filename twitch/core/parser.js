@@ -9,9 +9,6 @@ module.exports = {
 
         return {
             username: match[1],
-            user_id: match[2],
-            domain: match[3],
-            channel: match[4],
             message: match[5]
         };
     }

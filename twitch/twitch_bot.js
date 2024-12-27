@@ -1,7 +1,7 @@
 const Chatbot = require("./core/chatbot");
 const path = require("path")
 const fs = require("fs")
-const bot = new Chatbot(process.env.TWITCH_BOT_USERNAME, process.env.TWITCH_BOT_OAUTH, process.env.TWITCH_BOT_CHANNEL)
+const bot = new Chatbot(process.env.TWITCH_BOT_USERNAME, process.env.TWITCH_BOT_OAUTH, process.env.TWITCH_BOT_CHANNEL, process.env.TWITCH_BOT_CLIENT_ID)
 const commands = [];
 
 const commandPath = path.join(__dirname, 'commands');
@@ -19,15 +19,16 @@ for (const file of commandFiles) {
 
 bot.eventEmitter.on("chatMessage", (e) => {
     commands.forEach(command => {
-        command.usage.forEach(usage => {
+        command.usage.forEach(async usage => {
             if (e.message.toLowerCase().startsWith(usage)) {
-                command.execute(bot, e.username, e.message.split(" "))
+                const userInfo = await bot.getUserInfo(e.username);
+                command.execute(bot, userInfo, e.message.split(" "))
             }
         })
     })
 })
 
-bot.eventEmitter.on("connected", () => {
+bot.eventEmitter.on("connected", async () => {
     console.log("Twitch bot connected");
 })
 
