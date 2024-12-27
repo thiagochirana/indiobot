@@ -6,7 +6,7 @@ const { Colors } = require("discord.js");
 
 let notified = false;
 
-cron.schedule("* * * * *", async () => {
+cron.schedule(process.env.CRON_EXPRESSION, async () => {
   try {
     const uptime = await axios.get(`https://decapi.me/twitch/uptime/${process.env.TWITCH_CHANNEL}`).data;
 
