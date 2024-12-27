@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags, Colors } = require('discord.js');
-const embed = require('../../messages/embed');
+const embed = require('../../functions/embed');
 const attachs = require("../../attach.json")
 
 module.exports = {
