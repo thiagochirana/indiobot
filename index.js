@@ -1,6 +1,7 @@
 require("dotenv").config()
 
 require("./discord/discord_bot")
-require("./twitch/twitch_verify_status")
+require("./twitch/jobs/livestream_notifier")
+require("./twitch/twitch_bot")
 
 console.log("Bots iniciados!")

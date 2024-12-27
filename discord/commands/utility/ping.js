@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags, AttachmentBuilder, Colors } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, Colors } = require('discord.js');
 const embed = require('../../messages/embed');
 const attachs = require("../../attach.json")
 
@@ -7,7 +7,7 @@ module.exports = {
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
 	async execute(interaction) {
-        emb = embed.create("Pong!", "Respondido", Colors.DarkGold, attachs.gifs.ping )
+		const emb = embed.create({ title: "Pong!", description: "Respondido", color: Colors.DarkGold, imageUrl: attachs.gifs.ping })
         await interaction.reply({ embeds: [emb], flags: MessageFlags.Ephemeral })
 	}
 };
