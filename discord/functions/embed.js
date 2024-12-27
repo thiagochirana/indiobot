@@ -1,16 +1,18 @@
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    create(title, description, color, imageUrl = undefined, fields = undefined ){
-        embed = new EmbedBuilder()
+    create(obj) {
+        let { title, description, color, imageUrl, fields } = obj;
+
+        const embed = new EmbedBuilder()
             .setTitle(title)
-            .setDescription(description)            
+            .setDescription(description)
             .setColor(color)
             .setFooter({
                 text: "by BotCurumin",
             })
             .setTimestamp();
-        
+
         if (fields) {
             embed.addFields(fields)
         }
