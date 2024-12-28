@@ -17,26 +17,29 @@ for (const file of commandFiles) {
     }
 }
 
-bot.eventEmitter.on("chatMessage", (e) => {
+bot.eventEmitter.on("message", (e) => {
     commands.forEach(command => {
         command.usage.forEach(async usage => {
             if (e.message.toLowerCase().startsWith(usage)) {
                 const userInfo = await bot.getUserInfo(e.username);
-                command.execute(bot, userInfo, e.message.split(" "))
+                const obj = { sender: userInfo[0], message: { content: e.message, args: e.message.split(" ") } }
+
+                command.execute(bot, obj)
             }
         })
     })
 })
 
 bot.eventEmitter.on("connected", async () => {
-    console.log("Twitch bot connected");
+    console.log("Connected to twitch wss");
+})
+
+bot.eventEmitter.on("ready", async () => {
+    console.log("Twitch bot authenticated");
 })
 
 bot.eventEmitter.on("closed", () => {
     console.log("Twitch bot disconnected");
-})
-
-bot.eventEmitter.on("error", (e) => {
 })
 
 bot.eventEmitter.on("unhandled", (e) => {

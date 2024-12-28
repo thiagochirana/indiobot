@@ -15,64 +15,67 @@ class Chatbot {
     }
 
     connect() {
-        try {
-            if (this.chat) return console.log("Already connected")
+        if (this.chat) {
+            new Error("Already connected to Twitch WSS")
+        }
 
+        try {
             this.chat = new WebSocket(this.twitchWssURL);
 
             this.chat.addEventListener("open", (e) => {
                 this.chat.send(`PASS oauth:${this.oauth_token}`);
                 this.chat.send(`NICK ${this.username}`);
                 this.chat.send(`JOIN #${this.channel_name}`);
+                this.eventEmitter.emit("connected")
             });
 
-            this.chat.addEventListener("message", (event) => {
-                if (event.data.includes("PING")) { return this.chat.send("PONG"); };
+            this.chat.addEventListener("message", (event) => this.onMessage(event));
+            this.chat.addEventListener("error", (e) => this.onDisconnect(e));
+            this.chat.addEventListener("close", (e) => this.onDisconnect(e));
 
-                switch (true) {
-                    case event.data.includes("Welcome") && !event.data.includes("PRIVMSG"):
-                        this.eventEmitter.emit("connected")
-                        break;
-
-                    case event.data.includes("PRIVMSG"):
-                        this.eventEmitter.emit("chatMessage", parser.message(event.data))
-                        break;
-
-                    default:
-                        this.eventEmitter.emit("unhandled", event.data)
-                        break;
-                }
-            });
-
-            this.chat.addEventListener("error", (e) => {
-                this.eventEmitter.emit("error", JSON.stringify(e))
-                this.eventEmitter.emit("closed")
-
-                this.chat.close();
-                this.chat = undefined;
-            });
-
-            this.chat.addEventListener("close", () => {
-                this.eventEmitter.emit("closed")
-                this.chat = undefined;
-            });
         } catch (error) {
-            this.eventEmitter.emit("error", JSON.stringify(error))
             this.eventEmitter.emit("closed")
+            throw new Error(JSON.stringify(error))
         }
     }
 
     sendMessage(content) {
-        if (!this.chat) return console.log("Not connected");
+        if (!this.chat) throw new Error("Cannot send a message while not connected")
 
         this.chat.send(`PRIVMSG #${this.channel_name} :${content}`);
     }
 
     async getUserInfo(username) {
-        const rawData = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { "Authorization": `Bearer ${this.oauth_token}`, "Client-ID": `${this.client_id}` } });
-        const data = rawData.data.data;
+        try {
+            const rawData = await axios.get(`https://api.twitch.tv/helix/users?login=${username}`, { headers: { "Authorization": `Bearer ${this.oauth_token}`, "Client-ID": `${this.client_id}` } });
+            const data = rawData.data.data;
 
-        return data;
+            return data;
+        } catch (error) {
+            throw new Error("Failed to get user info")
+        }
+    }
+
+    onMessage(event) {
+        if (event.data.includes("PING")) {
+            return this.chat.send("PONG");
+        }
+
+        if (event.data.includes("Welcome") && !event.data.includes("PRIVMSG")) {
+            this.eventEmitter.emit("ready");
+        } else if (event.data.includes("PRIVMSG")) {
+            this.eventEmitter.emit("message", parser.message(event.data));
+        } else {
+            this.eventEmitter.emit("unhandled", event.data);
+        }
+    }
+
+    onDisconnect(e) {
+        this.eventEmitter.emit("closed")
+        this.chat.close();
+        this.chat = undefined;
+
+        throw new Error(JSON.stringify(e))
     }
 }
 
