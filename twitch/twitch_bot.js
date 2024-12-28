@@ -31,7 +31,7 @@ bot.eventEmitter.on("message", (e) => {
 })
 
 bot.eventEmitter.on("connected", async () => {
-    console.log("Connected to twitch wss");
+    console.log("Connected to twitch WSS");
 })
 
 bot.eventEmitter.on("ready", async () => {
