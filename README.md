@@ -1,4 +1,4 @@
-<center>![](https://i.ibb.co/8d5qkBp/indiobot.png)</center>
+<center><img src="https://i.ibb.co/8d5qkBp/indiobot.png"></center>
 
 ## About
 This repository contains the a Twitch Chatbot and a Discord Chatbot (made with discord.js) for DevCurumin's livestream and discord group.
