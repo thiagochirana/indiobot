@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.ibb.co/8d5qkBp/indiobot.png">
+    <img src="https://i.ibb.co/Kj42qXv/Indi-Bot-Logo-Png.png">
 </p>
 
 ## About
