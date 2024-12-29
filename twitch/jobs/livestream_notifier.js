@@ -8,12 +8,14 @@ let notified = false;
 
 cron.schedule(process.env.CRON_EXPRESSION, async () => {
   try {
-    const uptime = await axios.get(`https://decapi.me/twitch/uptime/${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}`).data;
+    const uptimeRaw = await axios.get(`https://decapi.me/twitch/uptime/${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}`);
+    const uptime = uptimeRaw.data;
 
     if (uptime.includes("offline")) return notified = false;
     if (notified) return;
 
-    const title = await axios.get(`https://decapi.me/twitch/title/${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}`).data;
+    const titleRaw = await axios.get(`https://decapi.me/twitch/title/${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}`);
+    const title = titleRaw.data;
 
     const emb = embed.create({ title: `LIVE ON! ${title}`, description: `Estou online, vem ver!\nhttps://www.twitch.tv/${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}/`, color: Colors.Purple, imageUrl: `https://static-cdn.jtvnw.net/previews-ttv/live_user_${process.env.TWITCH_CHANNEL_LIVE_NOTIFICATION}-400x225.jpg` })
 
