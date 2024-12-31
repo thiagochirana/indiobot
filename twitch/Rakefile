@@ -1,0 +1,109 @@
+require 'active_record'
+require 'rake'
+require 'pg'
+require_relative 'util/env'
+include Env
+
+SCHEMA_FILE='db/schema.rb'
+DB_FILE_PATH="#{DB_PATH}/#{DB_NAME}"
+
+namespace :db do
+  # Task de criar o banco de dados
+  desc 'Cria o banco de dados'
+  task :create do
+    begin
+      # SQLite cria o banco automaticamente quando você estabelece a conexão
+      ActiveRecord::Base.establish_connection(db_config)
+      puts "Banco de dados #{DB_FILE_PATH} criado com sucesso!"
+    rescue StandardError => e
+      puts "Erro ao criar banco de dados: #{e.message}"
+      puts e.backtrace
+    end
+  end
+
+  # Task para remover o banco de dados
+  desc 'Remove o banco de dados'
+  task :drop do
+    begin
+      if File.exist?(DB_NAME)
+        File.delete(DB_NAME)
+        puts "Banco de dados #{DB_FILE_PATH} removido com sucesso!"
+      else
+        puts "Banco de dados #{DB_FILE_PATH} não existe."
+      end
+    rescue StandardError => e
+      puts "Erro ao remover banco de dados: #{e.message}"
+    end
+  end
+
+  # Task para rodar as migrations
+  desc 'Executa as migrations'
+  task :migrate => :environment do
+    begin
+      Rake::Task["db:clear_locks"].execute
+      migration_path = File.join(File.dirname(__FILE__), 'db', 'migrate')
+
+      if !Dir.exist?(migration_path)
+        raise "Diretório de migrations não encontrado em #{migration_path}"
+      end
+
+      # ActiveRecord::SchemaMigration.create_table # schema table
+
+      migration_context = ActiveRecord::MigrationContext.new(migration_path)
+      migration_context.migrate
+
+      Rake::Task["db:schema_dump"].execute
+
+      puts 'Migrations aplicadas com sucesso!'
+    rescue StandardError => e
+      puts "Erro ao executar migrations: #{e.message}"
+      puts e.backtrace
+    end
+  end
+
+  # Task para gerar o schema.rb
+  desc 'Cria o schema.rb'
+  task :schema_dump => :environment do
+    require 'active_record/schema_dumper'
+    filename = File.join(File.dirname(__FILE__), SCHEMA_FILE)
+
+    File.open(filename, "w:utf-8") do |file|
+      ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+    end
+    puts "Schema gerado em db/schema.rb"
+  end
+
+  # Task para carregar o schema.rb
+  desc 'Carrega o schema.rb'
+  task :schema_load => :environment do
+    load File.join(File.dirname(__FILE__), SCHEMA_FILE)
+    puts "Schema carregado com sucesso!"
+  end
+
+  desc 'Limpa os locks do banco de dados'
+  task :clear_locks => :environment do
+    begin
+      ActiveRecord::Base.connection.execute("SELECT pg_advisory_unlock_all();")
+      puts "Locks removidos com sucesso!"
+    rescue StandardError => e
+      puts "Erro ao remover locks: #{e.message}"
+      puts e.backtrace if e.backtrace
+    end
+  end
+
+  # Configuração do ambiente do banco de dados
+  task :environment do
+    ActiveRecord::Base.establish_connection(db_config)
+    ActiveRecord::Base.connection
+  end
+end
+
+def db_config
+  {
+    adapter: 'sqlite3',
+    database: DB_FILE_PATH,           # Caminho do arquivo do banco de dados (pode ser relativo ou absoluto)
+    pool: 5,                     # Tamanho do pool de conexões (opcional)
+    timeout: 5000                # Timeout em milissegundos (opcional)
+  }
+end
+

@@ -1,22 +1,19 @@
 # frozen_string_literal: true
-require 'byebug'
 
-class PingCommand
+class RegisterCommand
   def self.name
-    'ping'
+    'register'
   end
 
   def self.usage
-    ['!ping']
+    ['!register']
   end
 
   def self.description
-    'Returns pong and args length'
+    'register the user'
   end
 
   def self.execute(websocket, interaction, channel_name)
-    puts "Sending a response for !ping command"
     websocket.send("PRIVMSG ##{channel_name} :Pong! @#{interaction[:sender]['login']}, your message has #{interaction[:message][:args].length} args")
-    puts "Message sended!"
   end
 end
