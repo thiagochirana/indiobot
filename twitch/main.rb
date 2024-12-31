@@ -52,7 +52,8 @@ def connect_to_twitch
 
   websocket.on :error do |e|
     puts "Erro na conexão: #{e}"
-    handle_disconnect(websocket, e)
+    # send a log to discord here!
+    handle_message(websocket, e.message)
   end
 end
 

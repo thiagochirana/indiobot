@@ -2,7 +2,9 @@
 
 require 'byebug'
 
-class PingCommand
+require_relative 'commands'
+
+class PingCommand < Commands
   def self.name
     'ping'
   end
@@ -17,6 +19,7 @@ class PingCommand
 
   def self.execute(websocket, interaction, channel_name)
     puts "Sending a response for !ping command"
+    puts interaction[:sender]
     websocket.send("PRIVMSG ##{channel_name} :Pong! @#{interaction[:sender]['login']}, your message has #{interaction[:message][:args].length} args")
     puts "Message sended!"
   end

@@ -7,8 +7,8 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :discord_nickname
       t.string :twitch_id
       t.string :twitch_nickname
-      t.float :wallet_points
-      t.string :role
+      t.float :wallet_points, default: 0.0
+      t.string :role, default: :viewer
 
       t.timestamps
     end
