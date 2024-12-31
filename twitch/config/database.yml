@@ -1,0 +1,7 @@
+development:
+  adapter: sqlite3
+  database: <%= "#{ ENV['DB_PATH'] }/#{ ENV['DB_NAME'] }" %>
+
+production:
+  adapter: sqlite3
+  database: <%= "#{ ENV['DB_PATH'] }/#{ ENV['DB_NAME'] }" %>

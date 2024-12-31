@@ -1,9 +1,8 @@
-require_relative '../../config/database'
 require 'active_record'
 
 class CreateUsers < ActiveRecord::Migration[8.0]
   def change
-    create_table :donates do |t|
+    create_table :users do |t|
       t.string :discord_id
       t.string :discord_nickname
       t.string :twitch_id
