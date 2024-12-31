@@ -1,4 +1,4 @@
-# frozen_string_literal = true
+# frozen_string_literal: true
 
 require 'websocket-client-simple'
 require 'event_emitter'
