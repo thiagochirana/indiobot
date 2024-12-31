@@ -146,4 +146,4 @@ dist
 .env
 
 *.sql
-*.sqlite3
+*.sqlite3*
