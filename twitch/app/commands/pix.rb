@@ -2,13 +2,13 @@
 
 require_relative 'commands'
 
-class PingCommand < Commands
+class PixCommand < Commands
   def self.name
-    'ping'
+    'pix'
   end
 
   def self.usage
-    ['!ping']
+    ['!pix']
   end
 
   def self.description
@@ -16,9 +16,9 @@ class PingCommand < Commands
   end
 
   def self.execute(websocket, interaction, channel_name)
-    puts "Sending a response for !ping command"
+    puts "Sending a response for !pix command"
     puts interaction[:sender]
-    websocket.send("PRIVMSG ##{channel_name} :Pong! @#{interaction[:sender]['login']}")
+    websocket.send("PRIVMSG ##{channel_name} : @#{interaction[:sender]['login']} streampix.devcurumin.com.br")
     puts "Message sended!"
   end
 end

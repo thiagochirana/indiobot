@@ -9,6 +9,7 @@ require 'byebug'
 
 require_relative 'app/commands/ping'
 require_relative 'app/commands/register'
+require_relative 'app/commands/pix'
 require_relative 'util/env'
 
 include Env
@@ -22,7 +23,8 @@ $client_id = TWITCH_BOT_CLIENT_ID
 # Adicione comandos aqui
 $loaded_commands = [
   PingCommand,
-  RegisterCommand
+  RegisterCommand,
+  PixCommand
 ]
 
 puts "Comandos carregados: #{$loaded_commands.map(&:name).join(', ')}".green
