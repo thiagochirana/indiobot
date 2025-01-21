@@ -147,3 +147,6 @@ dist
 
 *.sql
 *.sqlite3*
+
+*/log/*
+*/tmp/*

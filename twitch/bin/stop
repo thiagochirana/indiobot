@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Configurações
+APP_ROOT=$(realpath ".")
+PID_FILE="$APP_ROOT/tmp/pids/server.pid"
+
+# Verifica se o PID file existe
+if [ ! -f "$PID_FILE" ]; then
+    echo "PID file não encontrado em $PID_FILE"
+    exit 1
+fi
+
+# Lê o PID
+pid=$(cat "$PID_FILE")
+
+# Verifica se o processo existe
+if ! ps -p $pid > /dev/null 2>&1; then
+    echo "Processo $pid não está rodando"
+    rm "$PID_FILE"
+    exit 1
+fi
+
+# Tenta parar graciosamente primeiro
+echo "Tentando parar o processo $pid graciosamente..."
+kill -15 $pid
+
+# Espera até 30 segundos pelo processo terminar
+count=0
+while ps -p $pid > /dev/null 2>&1 && [ $count -lt 30 ]; do
+    sleep 1
+    count=$((count + 1))
+done
+
+# Se ainda estiver rodando, mata forçadamente
+if ps -p $pid > /dev/null 2>&1; then
+    echo "Processo não terminou graciosamente. Forçando parada..."
+    kill -9 $pid
+    sleep 1
+fi
+
+# Remove o PID file
+rm -f "$PID_FILE"
+echo "Aplicação parada"

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Configurações
+APP_ROOT=$(realpath ".")
+APP_ENV="production"
+APP_USER="deploy"
+RUBY_VERSION="3.3.5"
+GEM_HOME="$APP_ROOT/vendor/bundle"
+PID_FILE="$APP_ROOT/tmp/pids/server.pid"
+LOG_FILE="$APP_ROOT/log/production.log"
+
+# Garante que os diretórios necessários existem
+mkdir -p "$APP_ROOT/tmp/pids" "$APP_ROOT/log"
+
+# Verifica se já está rodando
+if [ -f "$PID_FILE" ]; then
+    pid=$(cat "$PID_FILE")
+    if ps -p $pid > /dev/null 2>&1; then
+        echo "Aplicação já está rodando com PID $pid"
+        exit 1
+    else
+        echo "PID file encontrado mas processo não existe. Removendo PID file."
+        rm "$PID_FILE"
+    fi
+fi
+
+# Configura o ambiente
+export RAILS_ENV="$APP_ENV"
+export GEM_HOME
+export PATH="$GEM_HOME/bin:$PATH"
+export BUNDLE_GEMFILE="$APP_ROOT/Gemfile"
+
+# Inicia a aplicação
+echo "Iniciando aplicação em modo $APP_ENV..."
+cd "$APP_ROOT"
+
+# Use o comando adequado para sua aplicação
+# Para uma aplicação Ruby pura:
+nohup ruby main.rb >> "$LOG_FILE" 2>&1 &
+
+# Salva o PID
+echo $! > "$PID_FILE"
+echo "Aplicação iniciada com PID $(cat $PID_FILE)"
