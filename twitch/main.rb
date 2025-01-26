@@ -29,8 +29,6 @@ $loaded_commands = [
 
 puts "Comandos carregados: #{$loaded_commands.map(&:name).join(', ')}".green
 
-websocket = nil
-
 # Função para se conectar ao WebSocket da Twitch
 def connect_to_twitch
   websocket = WebSocket::Client::Simple.connect(TWITCH_IRC_URL)
